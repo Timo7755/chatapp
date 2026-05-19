@@ -68,32 +68,56 @@ export default function ChatWindow({ conversationId }: Props) {
     const token = authStore.getToken();
     if (!token) return;
 
-    const ws = new WebSocket(`ws://localhost:3001?token=${token}`);
-    wsRef.current = ws;
+    let ws: WebSocket;
+    let reconnectTimeout: ReturnType<typeof setTimeout>;
+    let isUnmounted = false;
 
-    ws.onopen = () => setWsReady(true);
+    const connect = () => {
+      ws = new WebSocket(`ws://localhost:3001?token=${token}`);
+      wsRef.current = ws;
 
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (
-        data.type === "new_message" &&
-        data.message.conversationId === conversationId
-      ) {
-        queryClient.setQueryData<Message[]>(
-          ["messages", conversationId],
-          (prev = []) => {
-            if (prev.find((m) => m.id === data.message.id)) return prev;
-            return [...prev, data.message];
-          },
-        );
-        // Update last message in conversations cache
-        queryClient.invalidateQueries({ queryKey: ["conversations"] });
-      }
+      ws.onopen = () => {
+        setWsReady(true);
+        console.log("WS connected");
+      };
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (
+          data.type === "new_message" &&
+          data.message.conversationId === conversationId
+        ) {
+          queryClient.setQueryData<Message[]>(
+            ["messages", conversationId],
+            (prev = []) => {
+              if (prev.find((m) => m.id === data.message.id)) return prev;
+              return [...prev, data.message];
+            },
+          );
+          queryClient.invalidateQueries({ queryKey: ["conversations"] });
+        }
+      };
+
+      ws.onclose = () => {
+        setWsReady(false);
+        if (!isUnmounted) {
+          console.log("WS disconnected, reconnecting in 3s...");
+          reconnectTimeout = setTimeout(connect, 3000);
+        }
+      };
+
+      ws.onerror = () => {
+        ws.close();
+      };
     };
 
-    ws.onclose = () => setWsReady(false);
+    connect();
 
-    return () => ws.close();
+    return () => {
+      isUnmounted = true;
+      clearTimeout(reconnectTimeout);
+      ws?.close();
+    };
   }, [conversationId, queryClient]);
 
   const handleSend = (content: string) => {

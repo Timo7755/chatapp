@@ -10,6 +10,8 @@ import usersRoute from "./routes/users";
 import conversationsRoute from "./routes/conversations";
 import messagesRoute from "./routes/messages";
 import { handleConnection } from "./ws/handler";
+import { serveStatic } from "@hono/node-server/serve-static";
+import uploadRoute from "./routes/upload";
 
 const app = new Hono();
 
@@ -26,7 +28,8 @@ app.route("/api/auth", authRoutes);
 app.route("/api/users", usersRoute);
 app.route("/api/conversations", conversationsRoute);
 app.route("/api/messages", messagesRoute);
-
+app.route("/api/upload", uploadRoute);
+app.use("/uploads/*", serveStatic({ root: "./" }));
 app.get("/", (c) => c.json({ message: "Chat API running" }));
 
 const server = serve(
