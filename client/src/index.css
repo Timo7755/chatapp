@@ -1,0 +1,206 @@
+@import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap");
+@import "tailwindcss";
+:root {
+  --bg: #0a0a0a;
+  --bg-card: #0d0d0d;
+  --border: #1a2a1a;
+  --border-bright: #39ff14;
+  --green: #39ff14;
+  --green-dim: #1f7a0e;
+  --green-muted: #2a9e12;
+  --green-ghost: #39ff1415;
+  --text-primary: #39ff14;
+  --text-secondary: #38a81a;
+  --text-muted: #1f5c0e;
+  --text-dim: #2d7a18;
+  --error: #ff3a3a;
+  --font: "Share Tech Mono", monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg) !important;
+  color: var(--text-primary);
+  font-family: var(--font);
+}
+
+.retro-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.retro-input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-family: var(--font);
+  font-size: 13px;
+  padding: 12px 16px;
+  letter-spacing: 1px;
+  outline: none;
+  -webkit-appearance: none;
+  transition: border-color 0.15s;
+}
+
+.retro-input::placeholder {
+  color: var(--text-secondary);
+}
+.retro-input:focus {
+  border-color: var(--border-bright);
+}
+.retro-input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.retro-btn {
+  background: transparent;
+  border: 1px solid var(--border-bright);
+  color: var(--text-primary);
+  font-family: var(--font);
+  font-size: 13px;
+  letter-spacing: 4px;
+  padding: 12px;
+  text-transform: uppercase;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.15s;
+}
+
+.retro-btn:hover {
+  background: var(--green-ghost);
+}
+.retro-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.retro-btn-secondary {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-family: var(--font);
+  font-size: 13px;
+  letter-spacing: 2px;
+  padding: 10px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.retro-btn-secondary:hover {
+  border-color: var(--border-bright);
+  color: var(--text-primary);
+}
+
+.retro-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.retro-error {
+  font-size: 12px;
+  color: var(--error);
+  letter-spacing: 1px;
+  margin-top: 12px;
+}
+
+.blink {
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Scanline overlay */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.06) 2px,
+    rgba(0, 0, 0, 0.06) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.retro-card {
+  border: 1px solid var(--border);
+  padding: 28px;
+  position: relative;
+  background: var(--bg-card);
+}
+
+.retro-card::before,
+.retro-card::after,
+.retro-card > .corner-bl,
+.retro-card > .corner-br {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-color: var(--border-bright);
+  border-style: solid;
+}
+
+.retro-card::before {
+  top: -1px;
+  left: -1px;
+  border-width: 1px 0 0 1px;
+}
+.retro-card::after {
+  top: -1px;
+  right: -1px;
+  border-width: 1px 1px 0 0;
+}
+.retro-card > .corner-bl {
+  bottom: -1px;
+  left: -1px;
+  border-width: 0 0 1px 1px;
+}
+.retro-card > .corner-br {
+  bottom: -1px;
+  right: -1px;
+  border-width: 0 1px 1px 0;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-left: 1px solid var(--border);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--green-muted);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--green);
+}
