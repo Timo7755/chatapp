@@ -73,7 +73,8 @@ export default function ChatWindow({ conversationId }: Props) {
     let isUnmounted = false;
 
     const connect = () => {
-      ws = new WebSocket(`ws://localhost:3001?token=${token}`);
+      ws = new WebSocket(`${import.meta.env.VITE_WS_URL}/ws?token=${token}`);
+
       wsRef.current = ws;
 
       ws.onopen = () => {
